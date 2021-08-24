@@ -8,6 +8,7 @@ Server side
 
 import socket
 import operator
+from math import floor
 
 ops = {
     '+': operator.add,
@@ -22,7 +23,10 @@ ops = {
 
 
 def calculate(operation, op1, op2):
-    return ops[operation](op1, op2)
+    ans = ops[operation](float(op1), float(op2))
+    if isinstance(ans, float) and ans == floor(ans):
+        ans = int(ans)
+    return ans
 
 
 localIP = "127.0.0.1"
@@ -42,14 +46,15 @@ while True:
     bytesAddressPair = UDPServerSocket.recvfrom(bufferSize)
     message = bytesAddressPair[0]
     address = bytesAddressPair[1]
-    clientMsg = "Message from Client:{}".format(message)
-    clientIP = "Client IP Address:{}".format(address)
 
-    msgFromServer = calculate(*clientMsg.split())
-    bytesToSend = str.encode(msgFromServer)
+    message = message.decode()
+    try:
+        msgFromServer = calculate(*message.split())
+    except ZeroDivisionError:
+        msgFromServer = "Division by zero exception! Try again with valid input :)"
 
-    print(clientMsg)
-    print(clientIP)
+    bytesToSend = str.encode(str(msgFromServer))
 
+    print(f"client's address: {address}\nclient's request: {message}\nserver's response: {msgFromServer}\n")
     # Sending a reply to client
     UDPServerSocket.sendto(bytesToSend, address)
