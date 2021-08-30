@@ -11,7 +11,7 @@ import socket
 print("Input calculation request in the form 'operator operand operand', e.g. '- 13 8' for '13 - 8'")
 
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-serverAddressPort = ("127.0.0.1", 20001)
+serverAddressPort = ("192.168.1.54", 9077)
 bufferSize = 1024
 
 while True:
